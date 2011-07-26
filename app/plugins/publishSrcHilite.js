@@ -41,7 +41,7 @@ function JsHilite(src, charset) {
 	this.header = '<html><head><meta http-equiv="content-type" content="text/html; charset='+charset+'"> '+
 	"<style>\n\
 	.KEYW {color: #933;}\n\
-	.COMM {color: #bbb; font-style: italic;}\n\
+	.COMM {color: #bbb; }\n\
 	.NUMB {color: #393;}\n\
 	.STRN {color: #393;}\n\
 	.REGX {color: #339;}\n\
@@ -56,7 +56,7 @@ JsHilite.cache = {};
 JsHilite.prototype.hilite = function() {
 	var hilited = this.tokens.join("");
 	var line = 1;
-	if (this.showLinenumbers) hilited = hilited.replace(/(^|\n)/g, function(m){return m+"<span class='line'>"+((line<10)? " ":"")+((line<100)? " ":"")+(line++)+"</span> "});
+	if (this.showLinenumbers) hilited = hilited.replace(/(^|\n)/g, function(m){return m+"<span id='line"+line+"' class='line'>"+((line<10)? " ":"")+((line<100)? " ":"")+(line++)+"</span> "});
 	
 	return this.header+hilited+this.footer;
 }

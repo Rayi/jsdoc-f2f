@@ -11,7 +11,7 @@ JSDOC.Walker = function(/**JSDOC.TokenStream*/ts) {
 JSDOC.Walker.prototype.init = function() {
 	this.ts = null;
 
-	var globalSymbol = new JSDOC.Symbol("_global_", [], "GLOBAL", new JSDOC.DocComment(""));
+	var globalSymbol = new JSDOC.Symbol("_global_", [], "GLOBAL", new JSDOC.DocComment(""),0);
 	globalSymbol.isNamespace = true;
 	globalSymbol.srcFile = "";
 	globalSymbol.isPrivate = false;
@@ -23,6 +23,7 @@ JSDOC.Walker.prototype.init = function() {
 		The chain of symbols under which we are currently nested.
 		@type Array
 	*/
+    
 	this.namescope = [globalSymbol];
 	this.namescope.last = function(n){ if (!n) n = 0; return this[this.length-(1+n)] || "" };
 }
@@ -31,7 +32,6 @@ JSDOC.Walker.prototype.walk = function(/**JSDOC.TokenStream*/ts) {
 	this.ts = ts;
 	while (this.token = this.ts.look()) {
 		if (this.token.popNamescope) {
-			
 			var symbol = this.namescope.pop();
 			if (symbol.is("FUNCTION")) {
 				if (this.ts.look(1).is("LEFT_PAREN") && symbol.comment.getTag("function").length == 0) {
@@ -45,9 +45,10 @@ JSDOC.Walker.prototype.walk = function(/**JSDOC.TokenStream*/ts) {
 }
 
 JSDOC.Walker.prototype.step = function() {
+	var line = this.token.line;
 	if (this.token.is("JSDOC")) { // it's a doc comment
 	
-		var doc = new JSDOC.DocComment(this.token.data);
+		var doc = new JSDOC.DocComment(this.token.data, this.token.line);
 		
 				
 		if (doc.getTag("exports").length > 0) {
@@ -69,7 +70,7 @@ JSDOC.Walker.prototype.step = function() {
 			var name = lends.desc
 			if (!name) throw "@lends tag requires a value.";
 			
-			var symbol = new JSDOC.Symbol(name, [], "OBJECT", doc);
+			var symbol = new JSDOC.Symbol(name, [], "OBJECT", doc, line);
 			
 			this.namescope.push(symbol);
 			
@@ -90,7 +91,7 @@ JSDOC.Walker.prototype.step = function() {
 				doc.deleteTag("memberOf");
 			}
 
-			var symbol = new JSDOC.Symbol(virtualName, [], "VIRTUAL", doc);
+			var symbol = new JSDOC.Symbol(virtualName, [], "VIRTUAL", doc, line);
 			
 			JSDOC.Parser.addSymbol(symbol);
 			
@@ -108,7 +109,7 @@ JSDOC.Walker.prototype.step = function() {
 			return true;
 		}
 		else if (doc.getTag("overview").length > 0) { // it's a file overview
-			symbol = new JSDOC.Symbol("", [], "FILE", doc);
+			symbol = new JSDOC.Symbol("", [], "FILE", doc, line);
 			
 			JSDOC.Parser.addSymbol(symbol);
 			
@@ -139,7 +140,7 @@ JSDOC.Walker.prototype.step = function() {
 					
 				params = [];
 				
-				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc);
+				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc, line);
 
 				JSDOC.Parser.addSymbol(symbol);
 				
@@ -168,7 +169,7 @@ JSDOC.Walker.prototype.step = function() {
 				
 				params = JSDOC.Walker.onParamList(this.ts.balance("LEFT_PAREN"));
 
-				symbol = new JSDOC.Symbol(name, params, "FUNCTION", doc);
+				symbol = new JSDOC.Symbol(name, params, "FUNCTION", doc, line);
 				if (isInner) symbol.isInner = true;
 
 				if (this.ts.look(1).is("JSDOC")) {
@@ -215,7 +216,7 @@ JSDOC.Walker.prototype.step = function() {
 				if (this.lastDoc) doc = this.lastDoc;
 				params = JSDOC.Walker.onParamList(this.ts.balance("LEFT_PAREN"));
 				
-				symbol = new JSDOC.Symbol(name, params, "FUNCTION", doc);
+				symbol = new JSDOC.Symbol(name, params, "FUNCTION", doc, line);
 
 				if (isInner) symbol.isInner = true;
 				if (isConstructor) symbol.isa = "CONSTRUCTOR";
@@ -250,7 +251,7 @@ JSDOC.Walker.prototype.step = function() {
 				if (this.lastDoc) doc = this.lastDoc;
 				params = JSDOC.Walker.onParamList(this.ts.balance("LEFT_PAREN"));
 				
-				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc);
+				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc, line);
 				if (isInner) symbol.isInner = true;
 				
 				if (this.ts.look(1).is("JSDOC")) {
@@ -281,10 +282,10 @@ JSDOC.Walker.prototype.step = function() {
 					if (name.indexOf("#") > -1) name = name.match(/(^[^#]+)/)[0];
 					else name = this.namescope.last().alias;
 
-					symbol = new JSDOC.Symbol(name, params, "CONSTRUCTOR", doc);
+					symbol = new JSDOC.Symbol(name, params, "CONSTRUCTOR", doc, line);
 				}
 				else {
-					symbol = new JSDOC.Symbol(name, params, "FUNCTION", doc);
+					symbol = new JSDOC.Symbol(name, params, "FUNCTION", doc, line);
 				}
 				
 				if (this.ts.look(1).is("JSDOC")) {
@@ -314,7 +315,7 @@ JSDOC.Walker.prototype.step = function() {
 				
 				if (this.lastDoc) doc = this.lastDoc;
 				
-				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc);
+				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc, line);
 				if (isInner) symbol.isInner = true;
 				
 			
@@ -336,7 +337,7 @@ JSDOC.Walker.prototype.step = function() {
 					
 					if (this.lastDoc) doc = this.lastDoc;
 				
-					symbol = new JSDOC.Symbol(name, params, "OBJECT", doc);
+					symbol = new JSDOC.Symbol(name, params, "OBJECT", doc, line);
 					if (isInner) symbol.isInner = true;
 					
 				
@@ -356,7 +357,7 @@ JSDOC.Walker.prototype.step = function() {
 				
 				if (this.lastDoc) doc = this.lastDoc;
 				
-				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc);
+				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc, line);
 				if (isInner) symbol.isInner = true;
 				
 			
@@ -368,7 +369,7 @@ JSDOC.Walker.prototype.step = function() {
 				
 				if (this.lastDoc) doc = this.lastDoc;
 				
-				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc);
+				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc, line);
 				
 			
 				if (doc) JSDOC.Parser.addSymbol(symbol);
@@ -385,7 +386,7 @@ JSDOC.Walker.prototype.step = function() {
 				
 				if (this.lastDoc) doc = this.lastDoc;
 				
-				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc);
+				symbol = new JSDOC.Symbol(name, params, "OBJECT", doc, line);
 				
 			
 				if (doc) JSDOC.Parser.addSymbol(symbol);
@@ -422,7 +423,7 @@ JSDOC.Walker.prototype.step = function() {
 				
 				params = JSDOC.Walker.onParamList(this.ts.balance("LEFT_PAREN"));
 				
-				symbol = new JSDOC.Symbol(name, params, "FUNCTION", doc);
+				symbol = new JSDOC.Symbol(name, params, "FUNCTION", doc, line);
 				
 				JSDOC.Parser.addSymbol(symbol);
 				

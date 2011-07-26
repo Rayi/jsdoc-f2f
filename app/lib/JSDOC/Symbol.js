@@ -48,6 +48,7 @@ JSDOC.Symbol.prototype.init = function() {
 	this.srcFile = {};
 	this.type = "";
 	this.version = "";
+	this.line = "";//lineNumber
 }
 
 JSDOC.Symbol.prototype.serialize = function() {
@@ -120,7 +121,8 @@ JSDOC.Symbol.prototype.populate = function(
 		/** String */ name,
 		/** Object[] */ params,
 		/** String */ isa,
-		/** JSDOC.DocComment */ comment
+		/** JSDOC.DocComment */ comment,
+		/** Number */ line
 ) {
 	this.$args = arguments;
 	
@@ -139,6 +141,8 @@ JSDOC.Symbol.prototype.populate = function(
 	if (typeof JSDOC.PluginManager != "undefined") {
 		JSDOC.PluginManager.run("onSymbol", this);
 	}
+	
+	this.line  = line;
 }
 
 JSDOC.Symbol.prototype.setTags = function() {

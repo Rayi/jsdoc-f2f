@@ -28,19 +28,19 @@ JSDOC.TokenReader.prototype.tokenize = function(/**JSDOC.TextStream*/stream) {
 		if (this.read_snquote(stream, tokens))   continue;
 		if (this.read_regx(stream, tokens))      continue;
 		if (this.read_numb(stream, tokens))      continue;
-		if (this.read_punc(stream, tokens))      continue;
-		if (this.read_newline(stream, tokens))   continue;
+		if (this.read_punc(stream, tokens))      continue;		
 		if (this.read_space(stream, tokens))     continue;
 		if (this.read_word(stream, tokens))      continue;
-		
+		if (this.read_newline(stream, tokens))   continue;
 		// if execution reaches here then an error has happened
-		tokens.push(new JSDOC.Token(stream.next(), "TOKN", "UNKNOWN_TOKEN"));
+		tokens.push(new JSDOC.Token(stream.next(), "TOKN", "UNKNOWN_TOKEN", stream.line));
 	}
+	
 	return tokens;
 }
 
 /**
-	@returns {Boolean} Was the token found?
+ * @returns {Boolean} Was the token found?
  */
 JSDOC.TokenReader.prototype.read_word = function(/**JSDOC.TokenStream*/stream, tokens) {
 	var found = "";
@@ -53,14 +53,14 @@ JSDOC.TokenReader.prototype.read_word = function(/**JSDOC.TokenStream*/stream, t
 	}
 	else {
 		var name;
-		if ((name = JSDOC.Lang.keyword(found))) tokens.push(new JSDOC.Token(found, "KEYW", name));
-		else tokens.push(new JSDOC.Token(found, "NAME", "NAME"));
+		if ((name = JSDOC.Lang.keyword(found))) tokens.push(new JSDOC.Token(found, "KEYW", name, stream.line));
+		else tokens.push(new JSDOC.Token(found, "NAME", "NAME", stream.line));
 		return true;
 	}
 }
 
 /**
-	@returns {Boolean} Was the token found?
+ * @returns {Boolean} Was the token found?
  */
 JSDOC.TokenReader.prototype.read_punc = function(/**JSDOC.TokenStream*/stream, tokens) {
 	var found = "";
@@ -73,13 +73,14 @@ JSDOC.TokenReader.prototype.read_punc = function(/**JSDOC.TokenStream*/stream, t
 		return false;
 	}
 	else {
-		tokens.push(new JSDOC.Token(found, "PUNC", JSDOC.Lang.punc(found)));
+		tokens.push(new JSDOC.Token(found, "PUNC", JSDOC.Lang.punc(found), stream.line));
 		return true;
 	}
 }
 
 /**
-	@returns {Boolean} Was the token found?
+ * 查找空白字符
+ * @returns {Boolean} Was the token found?
  */
 JSDOC.TokenReader.prototype.read_space = function(/**JSDOC.TokenStream*/stream, tokens) {
 	var found = "";
@@ -93,13 +94,13 @@ JSDOC.TokenReader.prototype.read_space = function(/**JSDOC.TokenStream*/stream, 
 	}
 	else {
 		if (this.collapseWhite) found = " ";
-		if (this.keepWhite) tokens.push(new JSDOC.Token(found, "WHIT", "SPACE"));
+		if (this.keepWhite) tokens.push(new JSDOC.Token(found, "WHIT", "SPACE", stream.line));
 		return true;
 	}
 }
 
 /**
-	@returns {Boolean} Was the token found?
+ * @returns {Boolean} Was the token found?
  */
 JSDOC.TokenReader.prototype.read_newline = function(/**JSDOC.TokenStream*/stream, tokens) {
 	var found = "";
@@ -113,13 +114,13 @@ JSDOC.TokenReader.prototype.read_newline = function(/**JSDOC.TokenStream*/stream
 	}
 	else {
 		if (this.collapseWhite) found = "\n";
-		if (this.keepWhite) tokens.push(new JSDOC.Token(found, "WHIT", "NEWLINE"));
+		if (this.keepWhite) tokens.push(new JSDOC.Token(found, "WHIT", "NEWLINE", stream.line));
 		return true;
 	}
 }
 
 /**
-	@returns {Boolean} Was the token found?
+ * @returns {Boolean} Was the token found?
  */
 JSDOC.TokenReader.prototype.read_mlcomment = function(/**JSDOC.TokenStream*/stream, tokens) {
 	if (stream.look() == "/" && stream.look(1) == "*") {
@@ -128,17 +129,17 @@ JSDOC.TokenReader.prototype.read_mlcomment = function(/**JSDOC.TokenStream*/stre
 		while (!stream.look().eof && !(stream.look(-1) == "/" && stream.look(-2) == "*")) {
 			found += stream.next();
 		}
-		
+
 		// to start doclet we allow /** or /*** but not /**/ or /****
-		if (/^\/\*\*([^\/]|\*[^*])/.test(found) && this.keepDocs) tokens.push(new JSDOC.Token(found, "COMM", "JSDOC"));
-		else if (this.keepComments) tokens.push(new JSDOC.Token(found, "COMM", "MULTI_LINE_COMM"));
+		if (/^\/\*\*([^\/]|\*[^*])/.test(found) && this.keepDocs) tokens.push(new JSDOC.Token(found, "COMM", "JSDOC", stream.line));
+		else if (this.keepComments) tokens.push(new JSDOC.Token(found, "COMM", "MULTI_LINE_COMM", stream.line));
 		return true;
 	}
 	return false;
 }
 
 /**
-	@returns {Boolean} Was the token found?
+ * @returns {Boolean} Was the token found?
  */
 JSDOC.TokenReader.prototype.read_slcomment = function(/**JSDOC.TokenStream*/stream, tokens) {
 	var found;
@@ -153,7 +154,7 @@ JSDOC.TokenReader.prototype.read_slcomment = function(/**JSDOC.TokenStream*/stre
 		}
 		
 		if (this.keepComments) {
-			tokens.push(new JSDOC.Token(found, "COMM", "SINGLE_LINE_COMM"));
+			tokens.push(new JSDOC.Token(found, "COMM", "SINGLE_LINE_COMM", stream.line));
 		}
 		return true;
 	}
@@ -186,10 +187,10 @@ JSDOC.TokenReader.prototype.read_dbquote = function(/**JSDOC.TokenStream*/stream
  					if ( string.indexOf('.') != -1 ) {
  						LOG.warn( "The symbol '"+string+"' uses dot notation, but is written as a string literal." );
  					}
- 					tokens.push(new JSDOC.Token(string.substr(1, string.length-2), "NAME", "NAME"));
+ 					tokens.push(new JSDOC.Token(string.substr(1, string.length-2), "NAME", "NAME", stream.line));
  				}
  				else {
- 					tokens.push(new JSDOC.Token(string, "STRN", "DOUBLE_QUOTE"));
+ 					tokens.push(new JSDOC.Token(string, "STRN", "DOUBLE_QUOTE", stream.line));
  				}
 				return true;
 			}
@@ -215,7 +216,7 @@ JSDOC.TokenReader.prototype.read_snquote = function(/**JSDOC.TokenStream*/stream
 			}
 			else if (stream.look() == "'") {
 				string += stream.next();
-				tokens.push(new JSDOC.Token(string, "STRN", "SINGLE_QUOTE"));
+				tokens.push(new JSDOC.Token(string, "STRN", "SINGLE_QUOTE", stream.line));
 				return true;
 			}
 			else {
@@ -244,8 +245,8 @@ JSDOC.TokenReader.prototype.read_numb = function(/**JSDOC.TokenStream*/stream, t
 		return false;
 	}
 	else {
-		if (/^0[0-7]/.test(found)) tokens.push(new JSDOC.Token(found, "NUMB", "OCTAL"));
-		else tokens.push(new JSDOC.Token(found, "NUMB", "DECIMAL"));
+		if (/^0[0-7]/.test(found)) tokens.push(new JSDOC.Token(found, "NUMB", "OCTAL", stream.line));
+		else tokens.push(new JSDOC.Token(found, "NUMB", "DECIMAL", stream.line));
 		return true;
 	}
 }
@@ -282,7 +283,7 @@ JSDOC.TokenReader.prototype.read_hex = function(/**JSDOC.TokenStream*/stream, to
 	
 	while (!stream.look().eof) {
 		if (JSDOC.Lang.isHexDec(found) && !JSDOC.Lang.isHexDec(found+stream.look())) { // done
-			tokens.push(new JSDOC.Token(found, "NUMB", "HEX_DEC"));
+			tokens.push(new JSDOC.Token(found, "NUMB", "HEX_DEC", stream.line));
 			return true;
 		}
 		else {
@@ -327,7 +328,7 @@ JSDOC.TokenReader.prototype.read_regx = function(/**JSDOC.TokenStream*/stream, t
 					regex += stream.next();
 				}
 				
-				tokens.push(new JSDOC.Token(regex, "REGX", "REGX"));
+				tokens.push(new JSDOC.Token(regex, "REGX", "REGX", stream.line));
 				return true;
 			}
 			else {

@@ -1,17 +1,15 @@
-<div align="center">{+new Link().toFile("index.html").withText("Class Index")+}
-| {+new Link().toFile("files.html").withText("File Index")+}</div>
-<hr />
-<h2>Classes</h2>
-<ul class="classList">
-	<for each="thisClass" in="data">
-	<li>{!
-		if (thisClass.alias == "_global_") {
-			output += "<i>"+new Link().toClass(thisClass.alias)+"</i>";
-		}
-		else {
-			output += new Link().toClass(thisClass.alias);
-		}
-	!}</li>
-	</for>
-</ul>
-<hr />
+<div class="box">
+    <div class="box-hd">
+        <h3>Classes</h3>
+    </div>
+    <div class="box-bd">
+        <ul class="list class-list">
+            <for each="thisClass" in="data">
+            
+            <li>{!
+                output += new Link().toClass(thisClass.alias);
+            !}</li>
+            </for>
+        </ul>
+    </div>
+</div>

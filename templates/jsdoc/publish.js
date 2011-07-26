@@ -49,6 +49,8 @@ function publish(symbolSet) {
  	
  	// get a list of all the classes in the symbolset
  	var classes = symbols.filter(isaClass).sort(makeSortby("alias"));
+ 	
+ 	classes.shift();
 	
 	// create a filemap in which outfiles must be to be named uniquely, ignoring case
 	if (JSDOC.opt.u) {
@@ -99,29 +101,29 @@ function publish(symbolSet) {
 	classesindexTemplate = classesIndex = classes = null;
 	
 	// create the file index page
-	try {
-		var fileindexTemplate = new JSDOC.JsPlate(publish.conf.templatesDir+"allfiles.tmpl");
-	}
-	catch(e) { print(e.message); quit(); }
-	
-	var documentedFiles = symbols.filter(isaFile); // files that have file-level docs
-	var allFiles = []; // not all files have file-level docs, but we need to list every one
-	
-	for (var i = 0; i < files.length; i++) {
-		allFiles.push(new JSDOC.Symbol(files[i], [], "FILE", new JSDOC.DocComment("/** */")));
-	}
-	
-	for (var i = 0; i < documentedFiles.length; i++) {
-		var offset = files.indexOf(documentedFiles[i].alias);
-		allFiles[offset] = documentedFiles[i];
-	}
-		
-	allFiles = allFiles.sort(makeSortby("name"));
+//	try {
+//		var fileindexTemplate = new JSDOC.JsPlate(publish.conf.templatesDir+"allfiles.tmpl");
+//	}
+//	catch(e) { print(e.message); quit(); }
+//	
+//	var documentedFiles = symbols.filter(isaFile); // files that have file-level docs
+//	var allFiles = []; // not all files have file-level docs, but we need to list every one
+//	
+//	for (var i = 0; i < files.length; i++) {
+//		allFiles.push(new JSDOC.Symbol(files[i], [], "FILE", new JSDOC.DocComment("/** */")));
+//	}
+//	
+//	for (var i = 0; i < documentedFiles.length; i++) {
+//		var offset = files.indexOf(documentedFiles[i].alias);
+//		allFiles[offset] = documentedFiles[i];
+//	}
+//		
+//	allFiles = allFiles.sort(makeSortby("name"));
 
 	// output the file index page
-	var filesIndex = fileindexTemplate.process(allFiles);
-	IO.saveFile(publish.conf.outDir, "files"+publish.conf.ext, filesIndex);
-	fileindexTemplate = filesIndex = files = null;
+//	var filesIndex = fileindexTemplate.process(allFiles);
+//	IO.saveFile(publish.conf.outDir, "files"+publish.conf.ext, filesIndex);
+//	fileindexTemplate = filesIndex = files = null;
 }
 
 

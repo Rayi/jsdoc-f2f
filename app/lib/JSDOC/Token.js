@@ -3,10 +3,11 @@ if (typeof JSDOC == "undefined") JSDOC = {};
 /**
 	@constructor
 */
-JSDOC.Token = function(data, type, name) {
+JSDOC.Token = function(data, type, name,line) {
 	this.data = data;
 	this.type = type;
 	this.name = name;
+	this.line = line;
 }
 
 JSDOC.Token.prototype.toString = function() { 

@@ -7,6 +7,8 @@ JSDOC.TextStream = function(text) {
 	text = ""+text;
 	this.text = text;
 	this.cursor = 0;
+	this.line = 1;
+	this.endLine = 1;
 }
 
 JSDOC.TextStream.prototype.look = function(n, considerWhitespace) {
@@ -38,13 +40,17 @@ JSDOC.TextStream.prototype.look = function(n, considerWhitespace) {
 }
 
 JSDOC.TextStream.prototype.next = function(n) {
+	this.line = this.endLine;
+	
 	if (typeof n == "undefined") n = 1;
 	if (n < 1) return null;
 	
 	var pulled = "";
 	for (var i = 0; i < n; i++) {
 		if (this.cursor+i < this.text.length) {
-			pulled += this.text.charAt(this.cursor+i);
+			var c = this.text.charAt(this.cursor+i);			
+			pulled += c;
+			if (c.match(/\n/)) this.endLine++;
 		}
 		else {
 			var result = new String("");
@@ -56,3 +62,6 @@ JSDOC.TextStream.prototype.next = function(n) {
 	this.cursor += n;
 	return pulled;
 }
+
+
+

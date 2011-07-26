@@ -65,6 +65,12 @@ function Link() {
 
 		return linkString;
 	}
+    
+    this.getSrcPath = function(){
+		var srcPath = this.src;
+		      srcPath = srcPath.replace(/\.\.?[\\\/]/g, "").replace(/[:\\\/]/g, "_");
+	    return Link.base + publish.conf.srcDir + srcPath + publish.conf.ext;
+	}
 }
 
 /** prefixed for hashes */

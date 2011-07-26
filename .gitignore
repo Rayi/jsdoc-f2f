@@ -7,5 +7,7 @@
 *.bak
 .DS_Store
 Thumb.db
-.svn
-.svn/*
+.svn/
+.settings/
+.classpath
+.project

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset={+IO.encoding+}" />
+        <meta charset="{+IO.encoding+}" />
         <meta name="generator" content="JsDoc Toolkit" />
         {! Link.base = "../"; /* all generated links will be relative to this */ !}
         <title>{+data.alias+}</title>
@@ -51,12 +51,12 @@
                                     </if>
 
                                     <if test="data.version">
-                                    <p>版本：
+                                    <p>version：
                                     {+ data.version +}</p>                                    
                                     </if>
                                     
                                     <if test="data.augments.length">
-                                    <p>父类：
+                                    <p>parents：
                                         {+
                                             data.augments
                                             .sort()
@@ -69,7 +69,7 @@
                                     </if>
 
                                     <if test="data.see.length">
-                                    <p>范例：
+                                    <p>see：
                                         <for each="item" in="data.see">
                                             <span>{+ new Link().toSymbol(item) +}</span>
                                         </for>
@@ -77,11 +77,11 @@
                                     </if>
                                     
                                     <if test="!data.isBuiltin()">{# isn't defined in any file #}
-                                    <p>源码：
+                                    <p>source：
                                     {+new Link().toSrc(data.srcFile)+}</p>
                                     </if>
                                     
-                                    <if test="data.author"><p>作者：{+data.author+}</p></if>
+                                    <if test="data.author"><p>author：{+data.author+}</p></if>
                                     
                                 </div>
                             </div>

@@ -1,6 +1,6 @@
+简介
 ======================================================================
 
-DESCRIPTION:
 
 This is the source code for JsDoc Toolkit, an automatic documentation
 generation tool for JavaScript. It is written in JavaScript and is run

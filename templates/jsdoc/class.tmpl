@@ -77,8 +77,9 @@
                                     </if>
                                     
                                     <if test="!data.isBuiltin()">{# isn't defined in any file #}
-                                    <p>source：
+                                    <p>defined in：
                                     {+new Link().toSrc(data.srcFile)+}</p>
+                                    
                                     </if>
                                     
                                     <if test="data.author"><p>author：{+data.author+}</p></if>
@@ -474,7 +475,7 @@
                                                 <if test="member.isPrivate"><span class="attr">&lt;private&gt;</span></if>
                                                 <if test="member.isInner"><span class="attr">&lt;inner&gt;</span></if>
                                                 <if test="member.isStatic"><span class="attr">&lt;static&gt;</span></if>
-                                                <a class="view-source" href="{+new Link().toSrc(data.srcFile).getSrcPath()+}#line{+member.line+}">定位到源码</a>
+                                                <a class="view-source" href="{+new Link().toSrc(member.srcFile).getSrcPath()+}#line{+member.line+}">view source</a>
                                             </div>
 
                                             <div class="desc">
@@ -612,7 +613,7 @@
                                             <if test="member.isInner"><span class="attr">&lt;inner&gt;</span></if>
                                             <if test="member.isStatic"><span class="attr">&lt;static&gt;</span></if>
                                             
-                                            <a class="view-source" href="{+new Link().toSrc(data.srcFile).getSrcPath()+}#line{+member.line+}">定位到源码</a>
+                                            <a class="view-source" href="{+new Link().toSrc(member.srcFile).getSrcPath()+}#line{+member.line+}">view source</a>
                                         </div>
                                         
                                         <div class="desc">

@@ -115,7 +115,7 @@ hr{margin:10px 0;height:0;overflow:hidden;border:none;border-top:1px dotted #ccc
 .detail-list .title{margin-bottom:10px;}
 .detail-list div.desc{margin-left:30px;}
 
-.detail-list li .view-source{display:none;}
+.detail-list li .view-source{display:none;_display:inline;}
 .detail-list li:hover .view-source{display:inline;font-size:12px;}
 
 .go-top{position:fixed;width:24px;height:24px;bottom:0;right:10px;line-height:24px;text-align:center;color:#fff;font-size:12px;font-weight:bold;background:#06f;

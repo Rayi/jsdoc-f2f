@@ -1,3 +1,5 @@
+
+
 == 2.4.1 (unreleased) ==
 
   * Applied patch from allan.jardine to support quoted names in object literals. ( issue #293 )
